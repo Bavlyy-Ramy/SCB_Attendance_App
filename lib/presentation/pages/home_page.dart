@@ -5,9 +5,8 @@ class HomePage extends StatelessWidget {
 
   static const route = '/home_page';
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(body: Center(child: Text("Home Page")));
   }
 }

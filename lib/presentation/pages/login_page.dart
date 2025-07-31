@@ -19,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _obscurePassword = true; 
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 35),
 
-            // Email
+            // Email Field
             TextField(
               controller: emailController,
               decoration: InputDecoration(
@@ -55,14 +56,25 @@ class _LoginPageState extends State<LoginPage> {
 
             const SizedBox(height: 20),
 
-            // Password
+            // Password Field ✅ With Show/Hide Toggle
             TextField(
               controller: passwordController,
-              obscureText: true,
+              obscureText: _obscurePassword,
               decoration: InputDecoration(
                 labelText: "Password",
                 prefixIcon: const Icon(Icons.lock_outline),
-                suffixIcon: const Icon(Icons.visibility_off_outlined),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -71,7 +83,6 @@ class _LoginPageState extends State<LoginPage> {
 
             const SizedBox(height: 20),
 
-            // ✅ Login Button with BlocConsumer
             BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is AuthAuthenticated) {
@@ -96,9 +107,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onPressed: () {
                       context.read<AuthCubit>().login(
-                        emailController.text.trim(),
-                        passwordController.text.trim(),
-                      );
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                          );
                     },
                     child: const Text(
                       "Log in",
@@ -108,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                 );
               },
             ),
+
             const SizedBox(height: 30),
 
             // Divider
@@ -121,6 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                 Expanded(child: Divider()),
               ],
             ),
+
             const SizedBox(height: 30),
 
             // Social Buttons
@@ -135,7 +148,6 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Don't have an account?"),
-                //const SizedBox(width: 3),
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, RegisterPage.route);
