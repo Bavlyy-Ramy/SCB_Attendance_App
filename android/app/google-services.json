@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "610495779954",
+    "project_id": "scbattendanceapp-e5974",
+    "storage_bucket": "scbattendanceapp-e5974.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610495779954:android:9d061ab68695b7f0109eeb",
+        "android_client_info": {
+          "package_name": "com.example.scb_attendance_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCerHIh7P46bOCG5ym-DF0wnVDntNGK3O4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
