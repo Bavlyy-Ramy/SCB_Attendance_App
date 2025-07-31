@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scb_attendance_app/main.dart';
+import 'package:scb_attendance_app/presentation/blocs/auth_cubit/auth_cubit.dart';
+import 'package:scb_attendance_app/presentation/blocs/auth_cubit/auth_state.dart';
+import 'package:scb_attendance_app/presentation/pages/home_page.dart';
+import 'package:scb_attendance_app/presentation/pages/widgets/loading_dialog.dart.dart';
+import 'package:scb_attendance_app/presentation/pages/widgets/message_dialog.dart';
 
 class AdminRegisterPage extends StatefulWidget {
   const AdminRegisterPage({super.key});
@@ -12,6 +17,10 @@ class AdminRegisterPage extends StatefulWidget {
 }
 
 class _AdminRegisterPageState extends State<AdminRegisterPage> {
+  final emailController = TextEditingController();
+  final nameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -26,24 +35,29 @@ class _AdminRegisterPageState extends State<AdminRegisterPage> {
           children: [
             IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                navigatorKey.currentState?.pop();
-              },
+              onPressed: () => navigatorKey.currentState?.pop(),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             const Text(
               "Admin Register 👨‍💼",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 5),
-            const Text(
-              "Elevate Your HR Management with SCBA.",
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 30),
-
-            // Email Field
+            const SizedBox(height: 20),
+            // Name
             TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: "Name",
+                prefixIcon: const Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Email
+            TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 labelText: "Email",
                 prefixIcon: const Icon(Icons.email_outlined),
@@ -54,8 +68,9 @@ class _AdminRegisterPageState extends State<AdminRegisterPage> {
             ),
             const SizedBox(height: 20),
 
-            // Password Field
+            // Password
             TextField(
+              controller: passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 labelText: "Password",
@@ -66,11 +81,8 @@ class _AdminRegisterPageState extends State<AdminRegisterPage> {
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -79,8 +91,9 @@ class _AdminRegisterPageState extends State<AdminRegisterPage> {
             ),
             const SizedBox(height: 20),
 
-            // Confirm Password Field
+            // Confirm Password
             TextField(
+              controller: confirmPasswordController,
               obscureText: _obscureConfirmPassword,
               decoration: InputDecoration(
                 labelText: "Confirm Password",
@@ -91,67 +104,80 @@ class _AdminRegisterPageState extends State<AdminRegisterPage> {
                         ? Icons.visibility_off_outlined
                         : Icons.visibility_outlined,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureConfirmPassword = !_obscureConfirmPassword;
-                    });
-                  },
+                  onPressed: () => setState(
+                    () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                  ),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
+            const SizedBox(height: 30),
 
-            const SizedBox(height: 20),
+            BlocConsumer<AuthCubit, AuthState>(
+              listener: (context, state) {
+                if (state is AuthLoading) {
+                  showLoadingDialog(context, "Registering Admin...");
+                } else {
+                  Navigator.pop(context); // Close loading dialog if open
+                }
 
-            // Sign Up Button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6E61FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                if (state is AuthAuthenticated) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("✅ Admin registered successfully!"),
+                    ),
+                  );
+                  Navigator.pushReplacementNamed(context, HomePage.route);
+                }
+
+                if (state is AuthError) {
+                  showMessageDialog(
+                    context,
+                    "Registration Failed",
+                    state.message,
+                  );
+                }
+              },
+              builder: (context, state) {
+                return SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6E61FF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (passwordController.text !=
+                          confirmPasswordController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Passwords do not match"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      context.read<AuthCubit>().register(
+                        nameController.text.trim(),
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                        "admin",
+                      );
+                    },
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-                ),
-                onPressed: () {},
-                child: const Text(
-                  "Sign up",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
+                );
+              },
             ),
-            SizedBox(height: 10),
           ],
-        ),
-      ),
-    );
-  }
-
-  static Widget _buildSocialButton(IconData icon, String text) {
-    return SizedBox(
-      width: 400,
-      height: 50,
-      child: OutlinedButton.icon(
-        style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          side: const BorderSide(color: Colors.grey),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-        ),
-        onPressed: () {},
-        icon: FaIcon(icon, color: Colors.black),
-        label: SizedBox(
-          width: 200,
-          child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.black, fontSize: 18),
-            ),
-          ),
         ),
       ),
     );

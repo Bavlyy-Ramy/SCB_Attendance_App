@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scb_attendance_app/domain/entities/user_entity.dart';
 import 'package:scb_attendance_app/domain/usecases/auth%20usecases/get_current_user_usecase.dart';
 import 'package:scb_attendance_app/domain/usecases/auth%20usecases/login_usecase.dart';
 import 'package:scb_attendance_app/domain/usecases/auth%20usecases/register_usecase.dart';
@@ -29,15 +31,18 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> register(String name, String email, String password) async {
-    emit(AuthLoading());
-    try {
-      final user = await registerUseCase(name, email, password);
-      emit(AuthAuthenticated(user));
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
+  Future<UserEntity?> register(String name, String email, String password, String role) async {
+  emit(AuthLoading());
+  try {
+    final user = await registerUseCase(name, email, password, role);
+    emit(AuthAuthenticated(user));
+    return user; // ✅ return user
+  } catch (e) {
+    emit(AuthError(e.toString()));
+    return null;
   }
+}
+
 
   Future<void> getCurrentUser() async {
     emit(AuthLoading());
@@ -53,4 +58,13 @@ class AuthCubit extends Cubit<AuthState> {
     await signOutUseCase();
     emit(AuthLoggedOut());
   }
+
+
+Future<void> makeUserAdmin(String userId) async {
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .update({'role': 'admin'});
+}
+
 }

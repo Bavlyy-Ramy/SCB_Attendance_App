@@ -4,7 +4,7 @@ import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> Login(String email, String password);
-  Future<UserModel> register(String name, String email, String password);
+  Future<UserModel> register(String name, String email, String password,String role);
   Future<UserModel> getCurrentUser();
   Future<void> signOut();
 }
@@ -33,8 +33,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return UserModel.fromMap(userDoc.data()!, userDoc.id);
   }
 
-  @override
-  Future<UserModel> register(String name, String email, String password) async {
+Future<UserModel> register(String name, String email, String password, String role) async {
+  try {
     final credential = await firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -44,13 +44,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       id: credential.user!.uid,
       name: name,
       email: email,
-      role: "user", // default role
+      role: role,
     );
 
     await firestore.collection('users').doc(user.id).set(user.toMap());
 
     return user;
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'email-already-in-use') {
+      throw Exception("This email is already registered.");
+    } else {
+      throw Exception(e.message ?? "Registration failed.");
+    }
   }
+}
+
+
 
   @override
   Future<UserModel> getCurrentUser() async {

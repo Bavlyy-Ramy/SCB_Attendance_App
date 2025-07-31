@@ -23,15 +23,11 @@ class AuthRepositoryImpl implements AuthRepository {
     return _mapToEntity(userModel);
   }
 
-  @override
-  Future<UserEntity> register(
-    String name,
-    String email,
-    String password,
-  ) async {
-    final userModel = await remoteDataSource.register(name, email, password);
-    return _mapToEntity(userModel);
-  }
+ @override
+Future<UserEntity> register(String name, String email, String password, String role) async {
+  final userModel = await remoteDataSource.register(name, email, password, role);
+  return _mapToEntity(userModel);
+}
 
   @override
   Future<UserEntity> getCurrentUser() async {
