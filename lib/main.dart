@@ -37,7 +37,7 @@ class SCBAttendace extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
-        home: const LoginPage(),
+        home: const HomePage(),
         routes: {
           LoginPage.route: (context) => const LoginPage(),
           RegisterPage.route: (context) => const RegisterPage(),
