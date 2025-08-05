@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:scb_attendance_app/presentation/pages/view_attendance_history.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -218,7 +219,9 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, ViewAttendanceHistory.route);
+              },
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF6E61FF),
                 side: const BorderSide(color: Color(0xFF6E61FF)),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scb_attendance_app/main.dart';
-import 'package:scb_attendance_app/presentation/blocs/auth_cubit/auth_cubit.dart';
-import 'package:scb_attendance_app/presentation/blocs/auth_cubit/auth_state.dart';
+import 'package:scb_attendance_app/presentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:scb_attendance_app/presentation/cubits/auth_cubit/auth_state.dart';
 import 'package:scb_attendance_app/presentation/pages/home_page.dart';
 import 'package:scb_attendance_app/presentation/pages/widgets/loading_dialog.dart.dart';
 import 'package:scb_attendance_app/presentation/pages/widgets/message_dialog.dart';

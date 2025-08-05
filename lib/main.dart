@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scb_attendance_app/firebase_options.dart';
 import 'package:scb_attendance_app/injection_container.dart' as di;
-import 'package:scb_attendance_app/presentation/blocs/auth_cubit/auth_cubit.dart';
+import 'package:scb_attendance_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:scb_attendance_app/presentation/pages/admin_register_page.dart';
 import 'package:scb_attendance_app/presentation/pages/home_page.dart';
 import 'package:scb_attendance_app/presentation/pages/login_page.dart';
 import 'package:scb_attendance_app/presentation/pages/register_page.dart';
+import 'package:scb_attendance_app/presentation/pages/view_attendance_history.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -43,6 +44,7 @@ class SCBAttendace extends StatelessWidget {
           RegisterPage.route: (context) => const RegisterPage(),
           AdminRegisterPage.route: (context) => const AdminRegisterPage(),
           HomePage.route: (context) => const HomePage(),
+          ViewAttendanceHistory.route: (context) => const ViewAttendanceHistory(),
         },
       ),
     );
